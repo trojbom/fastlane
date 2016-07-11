@@ -198,6 +198,11 @@ module Frameit
 
       self.top_space_above_device += title.height + vertical_padding
 
+      if top_area_ratio >= 0 
+        self.top_space_above_device = screenshot.size[1] * top_area_ratio
+        top_space = (self.top_space_above_device / 2.0 - title.height / 2.0).round
+      end
+
       # First, put the keyword on top of the screenshot, if we have one
       if keyword
         background = background.composite(keyword, "png") do |c|
@@ -217,7 +222,15 @@ module Frameit
     end
 
     def actual_font_size
-      [@image.width / 10.0].max.round
+      ([@image.width / 10.0].max * font_multiplier).round
+    end
+
+    def font_multiplier
+      fetch_config['font_multiplier'] || 1
+    end
+
+    def top_area_ratio
+      fetch_config['top_area_ratio'] || -1
     end
 
     # The space between the keyword and the title
